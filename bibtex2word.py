@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 from optparse import OptionParser
 from pybtex.database.input import bibtex   # https://github.com/chbrown/pybtex
 import sys
@@ -22,11 +20,11 @@ parser = bibtex.Parser()
 
 try: bibdata = parser.parse_file(options.bibtexfile)
 except NameError:
-    prLong >> sys.stderr, 'Need an input filename. See --help'
+    print('Need an input filename. See --help')
     sys.exit(1)
 
 if len(args) > 0:
-    prLong >> sys.stderr, 'Warning: extra arguments ignored: ' % ' '.join(args)
+    print('Warning: extra arguments ignored: ' + ' '.join(args))
 
 try:
     ET.register_namespace('', "http://schemas.microsoft.com/office/word/2004/10/bibliography")
@@ -35,9 +33,9 @@ try:
 except TypeError:
     root = ET.Element('b:Sources', {'xmlns:b': "http://schemas.microsoft.com/office/word/2004/10/bibliography"""})
 
-for key, entry in bibdata.entries.iteritems():
+for key, entry in bibdata.entries.items():
     if options.debug:
-        print key
+        print(key)
     source = ET.SubElement(root, 'b:Source')
     tag = ET.SubElement(source, 'b:Tag')
     tag.text = key
@@ -81,16 +79,17 @@ for key, entry in bibdata.entries.iteritems():
     for author in bibdata.entries[key].persons["author"]:
         person = ET.SubElement(namelist, 'b:Person')
         first = ET.SubElement(person, 'b:First')
-        try: first.text = author.first()[0]
+        try: first.text = author.first_names[0]
         except IndexError:
             first.text = ''
         last = ET.SubElement(person, 'b:Last')
-        last.text = author.last()[0]
+        last.text = author.last_names[0]
 
 # hack, unable to get register_namespace to work right when parsing the doc
-output = ET.tostring(root).replace('ns0:', 'b:').replace('ns0=', 'b=')
+
+output = ET.tostring(root, encoding='unicode').replace('ns0:', 'b:').replace('ns0=', 'b=')
 try:
-    with open(options.xmlfile, 'w') as f:
+    with open(options.xmlfile, 'w',  encoding='utf-8') as f:
         f.write(output)
 except TypeError:
-    print output
+    print(output)

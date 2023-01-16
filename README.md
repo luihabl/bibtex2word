@@ -2,6 +2,8 @@
 
 Processes Bibtex files, produces Word Source.xml output
 
+**This is a fork to update the script to work with modern Python 3+.**
+
 # why?
 
 Because I use Word for work, and I prefer to manage citations in Bibtex rather than Word's janky citation manager. I export citations from Google Scholar (or Mendeley) and process them.
